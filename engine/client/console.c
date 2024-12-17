@@ -23,7 +23,6 @@ GNU General Public License for more details.
 #include "input.h"
 #include "utflib.h"
 
-static CVAR_DEFINE_AUTO( scr_conspeed, "600", FCVAR_ARCHIVE, "console moving speed" );
 static CVAR_DEFINE_AUTO( con_notifytime, "3", FCVAR_ARCHIVE, "notify time to live" );
 CVAR_DEFINE_AUTO( con_fontsize, "1", FCVAR_ARCHIVE, "console font number (0, 1 or 2)" );
 static CVAR_DEFINE_AUTO( con_fontrender, "2", FCVAR_ARCHIVE, "console font render mode (0: additive, 1: holes, 2: trans)" );
@@ -775,7 +774,6 @@ void Con_Init( void )
 		return; // dedicated server already have console
 
 	// must be init before startup video subsystem
-	Cvar_RegisterVariable( &scr_conspeed );
 	Cvar_RegisterVariable( &con_notifytime );
 	Cvar_RegisterVariable( &con_fontsize );
 	Cvar_RegisterVariable( &con_charset );
@@ -2064,20 +2062,7 @@ void Con_RunConsole( void )
 	}
 	else con.showlines = 0; // none visible
 
-	lines_per_frame = fabs( scr_conspeed.value ) * host.realframetime;
-
-	if( con.showlines < con.vislines )
-	{
-		con.vislines -= lines_per_frame;
-		if( con.showlines > con.vislines )
-			con.vislines = con.showlines;
-	}
-	else if( con.showlines > con.vislines )
-	{
-		con.vislines += lines_per_frame;
-		if( con.showlines < con.vislines )
-			con.vislines = con.showlines;
-	}
+	con.vislines = con.showlines;
 
 	if( FBitSet( con_charset.flags|con_fontscale.flags|con_fontnum.flags|cl_charset.flags|con_oldfont.flags,  FCVAR_CHANGED ))
 	{
